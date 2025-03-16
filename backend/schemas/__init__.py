@@ -5,3 +5,5 @@ from .user_schema import (
     UserCreate,
     UserUpdate
 )
+
+__all__ = ['BaseUser', 'UserPreview', 'UserDetails', 'UserCreate', 'UserUpdate']

@@ -1,4 +1,5 @@
-from sqlmodel import Session, SQLModel, create_engine
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
 
 from config import config, logger
 
@@ -16,20 +17,19 @@ def _get_db_engine():
     postgres_url = get_connection_url()
 
     try:
-        engine = create_engine(postgres_url, echo=config.DEBUG)
-        return engine
+        return create_engine(postgres_url, echo=config.DEBUG)
     except Exception as e:
         logger.error(f"Failed to get db engine. Details: {e}")
         raise e
 
 
-def init_db():
-    SQLModel.metadata.create_all(_engine)
-
-
 def get_db_session() -> Session:
-    with Session(_engine) as session:
+    session = SessionLocal()
+    try:
         yield session
+    finally:
+        session.close()
 
 
 _engine = _get_db_engine()
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_engine)

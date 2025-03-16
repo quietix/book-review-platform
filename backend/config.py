@@ -12,7 +12,6 @@ class Config:
         self._setup_app()
         self._setup_db()
 
-
     def _setup_app(self):
         self.DEBUG = bool(os.getenv("DEBUG"))
 
