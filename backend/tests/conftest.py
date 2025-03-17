@@ -1,15 +1,11 @@
-from typing import Generator
-
 import pytest
 
 from fastapi.testclient import TestClient
 
-from sqlalchemy import create_engine, text, Engine
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 import utils
-from config import config
 from models import Base
 from tests.factories import UserFactory
 from main import app

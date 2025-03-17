@@ -1,7 +1,4 @@
-import pytest
-
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import InvalidRequestError
 
 from models import User as UserModel
 from tests.factories import UserFactory
