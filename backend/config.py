@@ -3,6 +3,8 @@ import os
 
 from dotenv import load_dotenv
 
+from excepitons import ConfigurationError
+
 
 load_dotenv()
 
@@ -11,9 +13,18 @@ class Config:
     def __init__(self):
         self._setup_app()
         self._setup_db()
+        self.validate_variables()
+
+    def validate_variables(self):
+        if not all(vars(self)):
+            raise ConfigurationError()
 
     def _setup_app(self):
         self.DEBUG = bool(os.getenv("DEBUG"))
+
+        ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
+        if ALLOWED_ORIGINS:
+            self.ALLOWED_ORIGINS = ALLOWED_ORIGINS.split(',')
 
     def _setup_db(self):
         self.DB_NAME = os.getenv("DB_NAME")

@@ -1,44 +1,33 @@
-from fastapi import FastAPI
-from fastapi_sqlalchemy import DBSessionMiddleware, db
+from fastapi import FastAPI, Response
+from fastapi_sqlalchemy import DBSessionMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
-from models import User as UserModel
-from utils import (
-    get_connection_url,
-    get_hashed_password
+from config import config
+from utils import get_connection_url
+from api.v1.router import router as router_v1
+
+
+app = FastAPI(
+    title="Book review platform",
+    description="A platform where users can write and read book reviews, rate books, "
+                "and get recommendations based on reading history.",
+    version="0.0.1"
 )
-from schemas import (
-    UserPreview,
-    UserCreate,
-    UserDetails
-)
-
-
-app = FastAPI()
 
 app.add_middleware(DBSessionMiddleware, db_url=get_connection_url())
 
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello, FastAPI!"}
-
-
-@app.get("/users/", response_model=list[UserPreview])
-def list_users():
-    users = db.session.query(UserModel).all()
-    return users
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-@app.post("/users/", response_model=UserDetails)
-def create_user(user: UserCreate):
-    hashed_password = get_hashed_password(user.password)
+app.include_router(router_v1, prefix="/api")
 
-    db_user = UserModel(
-        **user.model_dump(exclude={"password"}),
-        hashed_password=hashed_password
-    )
 
-    db.session.add(db_user)
-    db.session.commit()
-
-    return db_user
+@app.get("/", tags=["Health"])
+async def read_root():
+    return Response(status_code=200)

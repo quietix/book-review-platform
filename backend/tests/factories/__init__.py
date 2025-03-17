@@ -1,4 +1,4 @@
-from .user_factory import UserFactory
+from .user_factory import UserFactory, UserUpsertDataFactory
 
 
-__all__ = ['UserFactory']
+__all__ = ['UserFactory', 'UserUpsertDataFactory']
