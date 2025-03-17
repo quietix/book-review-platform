@@ -5,4 +5,4 @@ Base = declarative_base()
 
 from .user_model import User # NOQA
 
-__all__ = ['User']
+__all__ = ['Base', 'User']

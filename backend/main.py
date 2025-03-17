@@ -2,13 +2,15 @@ from fastapi import FastAPI
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 
 from models import User as UserModel
-from utils import get_connection_url
+from utils import (
+    get_connection_url,
+    get_hashed_password
+)
 from schemas import (
     UserPreview,
     UserCreate,
     UserDetails
 )
-from services import UserService
 
 
 app = FastAPI()
@@ -29,10 +31,10 @@ def list_users():
 
 @app.post("/users/", response_model=UserDetails)
 def create_user(user: UserCreate):
-    hashed_password = UserService.get_hashed_password(user.password)
+    hashed_password = get_hashed_password(user.password)
 
     db_user = UserModel(
-        **user.dict(exclude={"password"}),
+        **user.model_dump(exclude={"password"}),
         hashed_password=hashed_password
     )
 
