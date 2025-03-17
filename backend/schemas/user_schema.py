@@ -20,9 +20,13 @@ class UserDetails(UserPreview):
     hashed_password: bytes
 
 
-class UserCreate(BaseUser):
+class UserUpsert(BaseUser):
     password: str
 
 
-class UserUpdate(UserPreview):
-    password: str
+class UserPartialUpdate(UserUpsert):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    password: Optional[str] = None

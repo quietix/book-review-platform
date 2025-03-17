@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import String, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column
 
 from . import Base
@@ -12,4 +12,4 @@ class User(Base):
     email: Mapped[str] = mapped_column(index=True, unique=True)
     name: Mapped[str] = mapped_column(String(255), nullable=True)
     surname: Mapped[str] = mapped_column(String(255), nullable=True)
-    hashed_password: Mapped[bytes]
+    hashed_password: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)

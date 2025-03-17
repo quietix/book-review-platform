@@ -8,7 +8,7 @@ from utils import (
 )
 from schemas import (
     UserPreview,
-    UserCreate,
+    UserUpsert,
     UserDetails
 )
 
@@ -30,7 +30,7 @@ def list_users():
 
 
 @app.post("/users/", response_model=UserDetails)
-def create_user(user: UserCreate):
+def create_user(user: UserUpsert):
     hashed_password = get_hashed_password(user.password)
 
     db_user = UserModel(
