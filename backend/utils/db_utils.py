@@ -13,15 +13,6 @@ def get_connection_url(db_name: str | None = None):
             f"{db_name or config.DB_NAME}")
 
 
-def get_connection_url_by_dbname(test_db: str):
-    return (f"postgresql://"
-            f"{config.DB_USER}:"
-            f"{config.DB_USER_PASSWORD}@"
-            f"{config.DB_HOST}:"
-            f"{config.DB_PORT}/"
-            f"{test_db}")
-
-
 def _get_db_engine():
     postgres_url = get_connection_url()
 
