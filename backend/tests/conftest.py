@@ -2,10 +2,10 @@ import pytest
 
 from fastapi.testclient import TestClient
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 
-import utils
+from utils import get_db_session
 from models import Base
 from tests.factories import UserFactory
 from main import app
@@ -16,7 +16,13 @@ TEST_DATABASE_URL = "sqlite:///:memory:"
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_database():
-    engine = create_engine(TEST_DATABASE_URL)
+    engine = create_engine(
+        url=TEST_DATABASE_URL,
+        connect_args={
+            "check_same_thread": False,
+        },
+        poolclass=StaticPool
+    )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base.metadata.create_all(bind=engine)
 
@@ -50,7 +56,7 @@ def client(db: Session):
     def override_get_db():
         yield db
 
-    app.dependency_overrides[utils.get_db_session] = override_get_db
+    app.dependency_overrides[get_db_session] = override_get_db
     with TestClient(app) as c:
         yield c
 
