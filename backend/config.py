@@ -26,6 +26,10 @@ class Config:
         if ALLOWED_ORIGINS:
             self.ALLOWED_ORIGINS = ALLOWED_ORIGINS.split(',')
 
+        self.AUTH_ALGORITHM = os.getenv("AUTH_ALGORITHM")
+        self.ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+        self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+
     def _setup_db(self):
         self.DB_NAME = os.getenv("DB_NAME")
         self.DB_USER = os.getenv("DB_USER")

@@ -5,7 +5,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 
-from utils import get_db_session
+from utils.db_utils import get_db_session
+from utils.auth_utils import create_access_token
+
 from models import Base
 from tests.factories import UserFactory
 from main import app
@@ -51,7 +53,7 @@ def set_session_for_factories(db: Session):
     UserFactory._meta.sqlalchemy_session = db
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def client(db: Session):
     def override_get_db():
         yield db
@@ -59,5 +61,21 @@ def client(db: Session):
     app.dependency_overrides[get_db_session] = override_get_db
     with TestClient(app) as c:
         yield c
+
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def authenticated_client(db: Session):
+    user = UserFactory.create()
+    token = create_access_token({"sub": user.username})
+
+    def override_get_db():
+        yield db
+
+    app.dependency_overrides[get_db_session] = override_get_db
+    with TestClient(app) as c:
+        c.headers["Authorization"] = f"Bearer {token}"
+        yield c, user
 
     app.dependency_overrides.clear()

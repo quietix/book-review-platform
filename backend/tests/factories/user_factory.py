@@ -3,7 +3,7 @@ import factory
 from faker import Faker
 
 from models import User as UserModel
-from utils import get_hashed_password
+from utils.security_utils import get_hashed_password
 from schemas import UserUpsert
 
 

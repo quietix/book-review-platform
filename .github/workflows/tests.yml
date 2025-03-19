@@ -7,30 +7,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.12
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
 
-    - name: Install dependencies
-      working-directory: backend
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install coverage
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage
 
-    - name: Run tests with coverage
-      working-directory: backend
-      run: |
-        python -m pytest
+      - name: Run tests with coverage
+        working-directory: backend
+        run: |
+          python -m coverage run --source=./ -m pytest ./
+          coverage report
 
-      env:
-        DB_NAME: github_actions
-        DB_USER: postgres
-        DB_USER_PASSWORD: postgres
-        DB_HOST: localhost
-        DB_PORT: 5432
-        DEBUG: 1
-        ALLOWED_ORIGINS: *
+        env:
+          DB_NAME: github_actions
+          DB_USER: postgres
+          DB_USER_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+
+          DEBUG: 1
+          ALLOWED_ORIGINS: '*'
+          AUTH_ALGORITHM: 'HS256'
+          ACCESS_TOKEN_EXPIRE_MINUTES: 60
+          JWT_SECRET_KEY: 'test_secret_key'
+
