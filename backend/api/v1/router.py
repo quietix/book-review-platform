@@ -1,8 +1,10 @@
 from fastapi import APIRouter
 
-from .users_api import router as users_router
+from .profiles_api import router as profiles_router
+from .auth_api import router as auth_router
 
 
 router = APIRouter(prefix="/v1")
 
-router.include_router(users_router, tags=["Users"])
+router.include_router(profiles_router, tags=["Profiles"])
+router.include_router(auth_router, tags=["Auth"])

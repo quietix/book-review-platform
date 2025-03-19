@@ -2,7 +2,7 @@ from typing import Type
 
 from sqlalchemy.orm import Session
 
-from utils import get_hashed_password
+from utils.security_utils import get_hashed_password
 from config import logger
 from models import User as UserModel
 
@@ -34,8 +34,27 @@ class UserRepository:
         return db_user
 
     @staticmethod
+    def retrieve_user_by_username(session: Session, username: str) -> UserModel:
+        db_user = session.query(UserModel).filter(UserModel.username == username).first()
+
+        if not db_user:
+            raise UserDoesNotExist()
+
+        return db_user
+
+    @staticmethod
     def create_user(session: Session, user: UserUpsert) -> UserModel:
         hashed_password = get_hashed_password(user.password)
+
+        if 'username' in user.model_dump(exclude_unset=True):
+            new_username = user.username
+            if session.query(UserModel).filter(UserModel.username == new_username).first():
+                raise CreateUserException(detail="Username is already taken.")
+
+        if 'email' in user.model_dump(exclude_unset=True):
+            new_email = user.email
+            if session.query(UserModel).filter(UserModel.email == new_email).first():
+                raise CreateUserException(detail="Email is already taken.")
 
         try:
             db_user = UserModel(
@@ -47,7 +66,6 @@ class UserRepository:
             session.commit()
 
         except Exception as e:
-            session.rollback()
             logger.error(f"Failed to create user. Details: {e}")
             raise CreateUserException()
 
@@ -90,7 +108,6 @@ class UserRepository:
         try:
             session.commit()
         except Exception as e:
-            session.rollback()
             logger.error(f"Failed to update user. Details: {e}")
             raise UpdateUserException()
 
@@ -131,7 +148,6 @@ class UserRepository:
             session.commit()
 
         except Exception as e:
-            session.rollback()
             logger.error(f"Failed to update user. Details: {e}")
             raise UpdateUserException()
 
@@ -150,6 +166,5 @@ class UserRepository:
             return True
 
         except Exception as e:
-            session.rollback()
             logger.error(f"Failed to delete user. Details: {e}")
             raise DeleteUserException(detail="Failed to delete user.")
