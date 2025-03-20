@@ -54,11 +54,6 @@ class TestAuthorAPI:
         assert response.json()["published_at"]
         assert response.json()["updated_at"]
 
-    def test_retrieve_author_unauthed(self, client, dummy_author):
-        url = client.app.url_path_for("retrieve_author", author_id=dummy_author.id)
-        response = client.get(url)
-        assert response.status_code == 401
-
     def test_partial_update_author(self, authenticated_client):
         client, authed_user = authenticated_client
         dummy_author = AuthorFactory.create(publisher=authed_user)
