@@ -9,7 +9,8 @@ from utils.db_utils import get_db_session
 from utils.auth_utils import create_access_token
 
 from models import Base
-from tests.factories import UserFactory
+from tests.factories.user_factory import UserFactory
+from tests.factories.author_factory import AuthorFactory
 from main import app
 
 
@@ -51,6 +52,7 @@ def db(setup_test_database):
 @pytest.fixture(autouse=True)
 def set_session_for_factories(db: Session):
     UserFactory._meta.sqlalchemy_session = db
+    AuthorFactory._meta.sqlalchemy_session = db
 
 
 @pytest.fixture
