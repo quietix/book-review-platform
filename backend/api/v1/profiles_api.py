@@ -11,7 +11,6 @@ from utils.db_utils import get_db_session
 from repositories import UserRepository
 from excepitons import DeleteUserException
 from services import authenticate
-from permissions import IsProfileOwner
 from models import User as UserModel
 
 from schemas import (
@@ -29,7 +28,6 @@ router = APIRouter()
 async def retrieve_profile(request: Request,
                            session: Session = Depends(get_db_session)):
     authed_user: UserModel = request.state.user
-    IsProfileOwner.check_permissions(request, authed_user)
     return UserRepository.retrieve_user(session, authed_user.id)
 
 
