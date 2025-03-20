@@ -15,10 +15,7 @@ from services.book_service import BookService
 from services import authenticate
 
 from permissions import UserIsPublisher
-from models import (
-    Book as BookModel,
-    User as UserModel,
-)
+from models import User as UserModel
 
 from schemas.book_schema import (
     BookPreview,
@@ -57,7 +54,8 @@ async def create_book_manually(request: Request,
 async def create_book_by_isbn(request: Request,
                               create_data: BookCreateByIsbn,
                               session: Session = Depends(get_db_session)):
-    return await BookService.create_book_by_isbn(session, create_data)
+    authed_user: UserModel = request.state.user
+    return await BookService.create_book_by_isbn(session, authed_user, create_data)
 
 
 @router.patch("/books/{book_id}/", response_model=BookPreview, status_code=200)

@@ -39,6 +39,7 @@ class BookDetails(BaseBook):
 class BookCreateManually(BaseBook):
     author_id: int
     genre_id: Optional[int] = None
+    isbn: Optional[int] = None
     title: str
     description: Optional[str] = None
 
@@ -49,6 +50,7 @@ class BookCreateByIsbn(BaseBook):
 
 class BookAutomaticCreationByIsbn(BaseBook):
     author_id: Optional[int] = None
+    publisher_id: Optional[int] = None
     isbn: Optional[str] = None
     title: str
     description: str

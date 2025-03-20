@@ -12,7 +12,6 @@ from models import (
 from schemas.book_schema import (
     BookCreateManually,
     BookPartialUpdate,
-    BookAutomaticCreationByIsbn,
 )
 from excepitons.book_exceptions import (
     BookDoesNotExist,
@@ -67,21 +66,6 @@ class BookRepository:
                 **create_data.model_dump(exclude_unset=True),
                 publisher_id=authed_user.id
             )
-            session.add(db_book)
-            session.commit()
-            return db_book
-
-        except Exception as e:
-            exc = CreateBookException()
-            logger.error(f"{exc.detail}. Details: {e}")
-            raise exc
-
-    @classmethod
-    def create_book_anonymously(cls,
-                                session: Session,
-                                create_data: BookAutomaticCreationByIsbn) -> AuthorModel:
-        try:
-            db_book = BookModel(**create_data.model_dump(exclude_unset=True))
             session.add(db_book)
             session.commit()
             return db_book
