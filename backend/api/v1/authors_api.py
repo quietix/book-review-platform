@@ -32,9 +32,7 @@ async def list_authors(session: Session = Depends(get_db_session)):
 
 
 @router.get("/authors/{author_id}/", response_model=AuthorDetails, status_code=200)
-@authenticate
-async def retrieve_author(request: Request,
-                          author_id: int,
+async def retrieve_author(author_id: int,
                           session: Session = Depends(get_db_session)):
     return AuthorService.retrieve_author(session, author_id)
 
