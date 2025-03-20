@@ -47,6 +47,13 @@ class BookCreateByIsbn(BaseBook):
     isbn: str
 
 
+class BookAutomaticCreationByIsbn(BaseBook):
+    author_id: Optional[int] = None
+    isbn: Optional[str] = None
+    title: str
+    description: str
+
+
 class BookPartialUpdate(BaseBook):
     author_id: Optional[int] = None
     publisher_id: Optional[int] = None

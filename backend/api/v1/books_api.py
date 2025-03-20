@@ -52,13 +52,12 @@ async def create_book_manually(request: Request,
     return BookRepository.create_book_manually(session, create_data, authed_user)
 
 
-# @router.post("/books/create-manually/", response_model=BookPreview, status_code=201)
-# @authenticate
-# async def create_book_by_isbn(request: Request,
-#                               create_data: BookCreateByIsbn,
-#                               session: Session = Depends(get_db_session)):
-#     authed_user: UserModel = request.state.user
-#     return BookRepository.create_book_by_isbn(session, create_data, authed_user)
+@router.post("/books/create-by-isbn/", response_model=BookPreview, status_code=201)
+@authenticate
+async def create_book_by_isbn(request: Request,
+                              create_data: BookCreateByIsbn,
+                              session: Session = Depends(get_db_session)):
+    return await BookService.create_book_by_isbn(session, create_data)
 
 
 @router.patch("/books/{book_id}/", response_model=BookPreview, status_code=200)

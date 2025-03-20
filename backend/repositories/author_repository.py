@@ -63,6 +63,20 @@ class AuthorRepository:
             raise CreateAuthorException()
 
     @classmethod
+    def create_author_anonymously(cls,
+                                  session: Session,
+                                  create_data: AuthorCreate) -> AuthorModel:
+        try:
+            db_author = AuthorModel(**create_data.model_dump())
+            session.add(db_author)
+            session.commit()
+            return db_author
+
+        except Exception as e:
+            logger.error(f"Failed to create the author. Details: {e}")
+            raise CreateAuthorException()
+
+    @classmethod
     def partial_update_author(cls,
                               session: Session,
                               author_id: int,
