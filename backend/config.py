@@ -13,6 +13,7 @@ class Config:
     def __init__(self):
         self._setup_app()
         self._setup_db()
+        self._setup_isbndb()
         self.validate_variables()
 
     def validate_variables(self):
@@ -36,6 +37,10 @@ class Config:
         self.DB_USER_PASSWORD = os.getenv("DB_USER_PASSWORD")
         self.DB_HOST = os.getenv("DB_HOST")
         self.DB_PORT = os.getenv("DB_PORT")
+
+    def _setup_isbndb(self):
+        self.ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")
+        self.ISBNDB_API_URL = os.getenv("ISBNDB_API_URL")
 
     def __str__(self):
         return str([f"{key}: {value}" for key, value in vars(self).items()])

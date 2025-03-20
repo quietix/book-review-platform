@@ -73,7 +73,7 @@ class Book(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    author_id: Mapped[int] = mapped_column(ForeignKey("author.id"), nullable=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey("author.id", ondelete="CASCADE"))
     author = relationship("Author", back_populates="books")
 
     publisher_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)
