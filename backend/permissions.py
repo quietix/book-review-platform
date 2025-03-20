@@ -37,3 +37,10 @@ class IsProfileOwner(BasePermission):
     def has_object_permission(cls, request: Request, obj) -> bool:
         user = getattr(request.state, "user", None)
         return user and obj.id == user.id
+
+
+class UserIsPublisher(BasePermission):
+    @classmethod
+    def has_object_permission(cls, request: Request, obj) -> bool:
+        user = getattr(request.state, "user", None)
+        return user and obj.publisher_id == user.id
