@@ -61,7 +61,10 @@ async def scrap_author_data(scrapped_data: dict) -> AuthorCreate:
         author_data: str = scrapped_data["book"]["authors"][0]
         author_name = author_data.split()[0][:author_data.find('.') + 1] if '.' in author_data \
             else author_data.split()[0]
-        author_surname = author_data.split()[1] if len(author_data.split()) > 1 else ""
+        author_surname = author_data.split()[-1] if len(author_data.split()) > 1 else ""
+        logger.debug(f"author_data = {author_data}")
+        logger.debug(f"author_name = {author_name}")
+        logger.debug(f"author_surname = {author_surname}")
         author_schema = AuthorCreate(name=author_name, surname=author_surname)
         return author_schema
 

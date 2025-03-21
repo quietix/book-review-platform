@@ -39,7 +39,7 @@ class BookDetails(BaseBook):
 class BookCreateManually(BaseBook):
     author_id: int
     genre_id: Optional[int] = None
-    isbn: Optional[int] = None
+    isbn: Optional[str] = None
     title: str
     description: Optional[str] = None
 

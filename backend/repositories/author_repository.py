@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Optional
 
 from sqlalchemy.orm import Session, joinedload
 
@@ -34,6 +34,17 @@ class AuthorRepository:
         return db_author
 
     @staticmethod
+    def retrieve_author_by_name_surname(session: Session,
+                                        author_name: str,
+                                        author_surname: str) -> Optional[Type[AuthorModel]]:
+        db_author = (session.query(AuthorModel).filter(
+            AuthorModel.name == author_name,
+            AuthorModel.surname == author_surname
+        ).first())
+
+        return db_author
+
+    @staticmethod
     def list_authors_and_prefetch(session: Session) -> list[Type[AuthorModel]]:
         return session.query(AuthorModel).options(joinedload(AuthorModel.publisher)).all()
 
@@ -52,6 +63,30 @@ class AuthorRepository:
                       session: Session,
                       create_data: AuthorCreate,
                       authed_user: UserModel) -> AuthorModel:
+        try:
+            db_author = AuthorModel(**create_data.model_dump(), publisher_id=authed_user.id)
+            session.add(db_author)
+            session.commit()
+            return db_author
+
+        except Exception as e:
+            logger.error(f"Failed to create the author. Details: {e}")
+            raise CreateAuthorException()
+
+    @classmethod
+    def get_or_create_author(cls,
+                             session: Session,
+                             create_data: AuthorCreate,
+                             authed_user: UserModel) -> AuthorModel:
+        db_author = cls.retrieve_author_by_name_surname(
+            session,
+            author_name=create_data.name,
+            author_surname=create_data.surname
+        )
+
+        if db_author:
+            return db_author
+
         try:
             db_author = AuthorModel(**create_data.model_dump(), publisher_id=authed_user.id)
             session.add(db_author)
