@@ -19,7 +19,6 @@ from repositories.author_repository import AuthorRepository
 
 
 class BookService:
-
     @classmethod
     def list_books(cls, session: Session) -> List[BookDetails]:
         authors = BookRepository.list_books_and_prefetch(session)
@@ -42,7 +41,8 @@ class BookService:
         )
 
         try:
-            db_author = AuthorRepository.create_author(session, author_schema, authed_user)
+            db_author = AuthorRepository.get_or_create_author(session, author_schema, authed_user)
+            logger.debug(f"db_author = {db_author}")
 
             book_schema.author_id = db_author.id
             book_schema.isbn = create_data.isbn
