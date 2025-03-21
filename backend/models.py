@@ -104,7 +104,7 @@ class Rating(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user = relationship("User", back_populates="ratings")
 
-    rating: Mapped[float] = mapped_column(
+    rating: Mapped[int] = mapped_column(
         CheckConstraint("rating >= 1 AND rating <= 5", name="check_rating_rating")
     )
 
