@@ -3,10 +3,6 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
-from config import logger
-from excepitons.isbn_api_exceptions import IsbnAPIException
-from utils import isbn_api_utils
-from models import User as UserModel
 from schemas.rating_schema import RatingDetails
 from repositories.rating_repository import RatingRepository
 
