@@ -24,6 +24,13 @@ class BookPreview(BaseBook):
     updated_at: datetime
 
 
+class BookNestedPreview(BaseBook):
+    id: int
+    genre: Optional[GenrePreview]
+    isbn: Optional[str]
+    title: str
+
+
 class BookDetails(BaseBook):
     id: int
     author: AuthorPreview
