@@ -122,7 +122,7 @@ class Review(Base):
     book_id: Mapped[int] = mapped_column(ForeignKey("book.id"))
     book = relationship("Book", back_populates="reviews")
 
-    rating_id: Mapped[int] = mapped_column(ForeignKey("rating.id"))
+    rating_id: Mapped[int] = mapped_column(ForeignKey("rating.id"), nullable=True)
     rating = relationship("Rating", back_populates="reviews")
 
     title: Mapped[str] = mapped_column(String(255))

@@ -16,6 +16,15 @@ class UserPreview(BaseUser):
     id: int
 
 
+class UserNestedPreview(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    username: str
+    name: Optional[str]
+    surname: Optional[str]
+
+
 class UserDetails(UserPreview):
     hashed_password: bytes
 

@@ -35,6 +35,18 @@ class RatingRepository:
         return db_rating
 
     @staticmethod
+    def retrieve_rating_by_book_and_user(session: Session, book_id: int, user_id: int):
+        db_rating = (session.query(RatingModel).filter(
+            RatingModel.book_id == book_id,
+            RatingModel.user_id == user_id
+        ).first())
+
+        if not db_rating:
+            raise RatingDoesNotExist()
+
+        return db_rating
+
+    @staticmethod
     def list_ratings_and_prefetch(session: Session) -> list[Type[RatingModel]]:
         return session.query(RatingModel).options(
             joinedload(RatingModel.book),
