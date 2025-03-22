@@ -4,7 +4,9 @@ from typing import Optional
 from jose import jwt
 import jwt as jwt_pac
 
-from fastapi import HTTPException
+from fastapi import HTTPException, FastAPI
+from fastapi.openapi.utils import get_openapi
+
 from sqlalchemy.orm import Session
 
 from config import config
@@ -37,3 +39,35 @@ def verify_token(token: str, session: Session = None) -> UserModel:
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt_pac.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def get_custom_openapi_schema(app: FastAPI):
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
+
+    security_scheme = {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+    }
+
+    if "components" not in openapi_schema:
+        openapi_schema["components"] = {}
+
+    if "securitySchemes" not in openapi_schema["components"]:
+        openapi_schema["components"]["securitySchemes"] = {}
+
+    openapi_schema["components"]["securitySchemes"]["BearerAuth"] = security_scheme
+
+    for path in openapi_schema["paths"].values():
+        for method in path.values():
+            method["security"] = [{"BearerAuth": []}]
+
+    return openapi_schema

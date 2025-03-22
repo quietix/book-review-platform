@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import config
 from api.v1.router import router as router_v1
+from utils.auth_utils import get_custom_openapi_schema
 
 
 app = FastAPI(
@@ -11,6 +12,8 @@ app = FastAPI(
                 "and get recommendations based on reading history.",
     version="0.0.1"
 )
+
+app.openapi = lambda: get_custom_openapi_schema(app)
 
 app.add_middleware(
     CORSMiddleware,

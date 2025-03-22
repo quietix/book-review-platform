@@ -17,6 +17,11 @@ class RatingPreview(BaseRating):
     rating: int
 
 
+class PratingNestedPreview(BaseRating):
+    id: int
+    rating: int
+
+
 class RatingDetails(BaseRating):
     id: int
     book: BookDetails
