@@ -22,7 +22,7 @@ from excepitons.author_exceptions import (
 class AuthorRepository:
     @staticmethod
     def list_authors(session: Session) -> list[Type[AuthorModel]]:
-        return session.query(AuthorModel).all()
+        return session.query(AuthorModel).order_by(AuthorModel.id).all()
 
     @staticmethod
     def retrieve_author(session: Session, author_id: int) -> Type[AuthorModel]:

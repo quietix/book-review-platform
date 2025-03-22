@@ -25,13 +25,6 @@ class BasePermission:
             )
 
 
-class IsAuthorized(BasePermission):
-    @classmethod
-    def has_permission(cls, request: Request, *args, **kwargs) -> bool:
-        user = getattr(request.state, 'user', None)
-        return bool(user)
-
-
 class UserIsOwner(BasePermission):
     @classmethod
     def has_object_permission(cls, request: Request, obj) -> bool:
@@ -44,3 +37,10 @@ class UserIsPublisher(BasePermission):
     def has_object_permission(cls, request: Request, obj) -> bool:
         user = getattr(request.state, "user", None)
         return user and obj.publisher_id == user.id
+
+
+class IsAdmin(BasePermission):
+    @classmethod
+    def has_permission(cls, request: Request, *args, **kwargs) -> bool:
+        user = getattr(request.state, "user", None)
+        return user.is_admin

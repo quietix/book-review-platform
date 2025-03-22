@@ -23,7 +23,7 @@ from excepitons.rating_exceptions import (
 class RatingRepository:
     @staticmethod
     def list_ratings(session: Session) -> list[Type[RatingModel]]:
-        return session.query(RatingModel).all()
+        return session.query(RatingModel).order_by(RatingModel.id).all()
 
     @staticmethod
     def retrieve_rating(session: Session, rating_id: int) -> Type[RatingModel]:
