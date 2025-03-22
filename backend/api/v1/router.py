@@ -8,6 +8,7 @@ from .books_api import router as books_router
 from .ratings_api import router as ratings_router
 from .reviews_api import router as reviews_router
 from .status_api import router as statuses_router
+from .reading_item_api import router as reading_item_router
 
 
 router = APIRouter(prefix="/v1")
@@ -20,3 +21,4 @@ router.include_router(books_router, tags=["Books"])
 router.include_router(ratings_router, tags=["Ratings"])
 router.include_router(reviews_router, tags=["Reviews"])
 router.include_router(statuses_router, tags=["Statuses"])
+router.include_router(reading_item_router, tags=["Reading Items"])
