@@ -26,6 +26,7 @@ class UserNestedPreview(BaseModel):
 
 
 class UserDetails(UserPreview):
+    is_admin: bool
     hashed_password: bytes
 
 
