@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 
-from .profiles_api import router as profiles_router
-from .auth_api import router as auth_router
-from .authors_api import router as authors_router
-from .genres_api import router as genres_router
-from .books_api import router as books_router
-from .ratings_api import router as ratings_router
-from .reviews_api import router as reviews_router
-from .status_api import router as statuses_router
-from .reading_item_api import router as reading_item_router
+from .profiles_routes import router as profiles_router
+from .auth_routes import router as auth_router
+from .authors_routes import router as authors_router
+from .genres_routes import router as genres_router
+from .books_routes import router as books_router
+from .ratings_routes import router as ratings_router
+from .reviews_routes import router as reviews_router
+from .status_routes import router as statuses_router
+from .reading_item_routes import router as reading_item_router
 
 
 router = APIRouter(prefix="/v1")
