@@ -24,7 +24,7 @@ from excepitons.book_exceptions import (
 class BookRepository:
     @staticmethod
     def list_books(session: Session) -> list[Type[BookModel]]:
-        return session.query(BookModel).all()
+        return session.query(BookModel).order_by(BookModel.id).all()
 
     @staticmethod
     def retrieve_book(session: Session, book_id: int) -> Type[BookModel]:

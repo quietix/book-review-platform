@@ -20,7 +20,7 @@ from excepitons.genre_exceptions import (
 class GenreRepository:
     @staticmethod
     def list_genres(session: Session) -> list[Type[GenreModel]]:
-        return session.query(GenreModel).all()
+        return session.query(GenreModel).order_by(GenreModel.id).all()
 
     @staticmethod
     def retrieve_genre(session: Session, genre_id: int) -> Type[GenreModel]:

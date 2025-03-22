@@ -24,7 +24,7 @@ from excepitons.review_exceptions import (
 class ReviewRepository:
     @staticmethod
     def list_reviews(session: Session) -> list[Type[ReviewModel]]:
-        return session.query(ReviewModel).all()
+        return session.query(ReviewModel).order_by(ReviewModel.id).all()
 
     @staticmethod
     def retrieve_review(session: Session, review_id: int) -> Type[ReviewModel]:
