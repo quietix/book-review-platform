@@ -36,7 +36,7 @@ class User(Base):
     published_books = relationship("Book", back_populates="publisher")
     published_reviews = relationship("Review", back_populates="publisher")
     ratings = relationship("Rating", back_populates="user")
-    reading_list = relationship("ReadingList", back_populates="user")
+    reading_items = relationship("ReadingItem", back_populates="user")
 
 
 class Author(Base):
@@ -90,7 +90,7 @@ class Book(Base):
 
     reviews = relationship("Review", back_populates="book")
     ratings = relationship("Rating", back_populates="book")
-    reading_list = relationship("ReadingList", back_populates="book")
+    reading_items = relationship("ReadingItem", back_populates="book")
 
 
 class Rating(Base):
@@ -138,19 +138,19 @@ class Status(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     status: Mapped[str] = mapped_column(String(255))
 
-    reading_list = relationship("ReadingList", back_populates="status")
+    reading_items = relationship("ReadingItem", back_populates="status")
 
 
-class ReadingList(Base):
+class ReadingItem(Base):
     __tablename__ = "reading_list"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    user = relationship("User", back_populates="reading_list")
+    user = relationship("User", back_populates="reading_items")
 
     book_id: Mapped[int] = mapped_column(ForeignKey("book.id"))
-    book = relationship("Book", back_populates="reading_list")
+    book = relationship("Book", back_populates="reading_items")
 
     status_id: Mapped[int] = mapped_column(ForeignKey("status.id"))
-    status = relationship("Status", back_populates="reading_list")
+    status = relationship("Status", back_populates="reading_items")
