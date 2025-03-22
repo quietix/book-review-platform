@@ -142,7 +142,7 @@ class Status(Base):
 
 
 class ReadingItem(Base):
-    __tablename__ = "reading_list"
+    __tablename__ = "reading_item"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
@@ -154,3 +154,5 @@ class ReadingItem(Base):
 
     status_id: Mapped[int] = mapped_column(ForeignKey("status.id"))
     status = relationship("Status", back_populates="reading_items")
+
+    published_at: Mapped[datetime] = mapped_column(default=func.now())

@@ -1,3 +1,5 @@
+import datetime
+
 from pydantic import BaseModel, ConfigDict
 
 from schemas.user_schema import UserNestedPreview
@@ -14,6 +16,7 @@ class ReadingItemPreview(BaseReadingItem):
     user_id: int
     book_id: int
     status_id: int
+    published_at: datetime.datetime
 
 
 class ReadingItemDetails(BaseReadingItem):
@@ -21,6 +24,7 @@ class ReadingItemDetails(BaseReadingItem):
     user: UserNestedPreview
     book: BookNestedPreview
     status: StatusPreview
+    published_at: datetime.datetime
 
 
 class ReadingItemCreate(BaseReadingItem):
