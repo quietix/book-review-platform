@@ -28,6 +28,12 @@ class AuthorPreview(BaseAuthor):
     publisher_id: Optional[int]
 
 
+class AuthorNestedPreview(BaseAuthor):
+    id: int
+    name: str
+    surname: str
+
+
 class AuthorCreate(BaseAuthor):
     name: str
     surname: str

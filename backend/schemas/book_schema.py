@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 from .user_schema import UserPreview
-from .author_schema import AuthorPreview
+from .author_schema import AuthorPreview, AuthorNestedPreview
 from .genre_schema import GenrePreview
 
 
@@ -41,6 +41,14 @@ class BookDetails(BaseBook):
     description: Optional[str]
     published_at: datetime
     updated_at: datetime
+
+
+class BookRecommendations(BaseBook):
+    id: int
+    author: AuthorNestedPreview
+    publisher: Optional[UserPreview]
+    genre: Optional[GenrePreview]
+    title: str
 
 
 class BookCreateManually(BaseBook):
