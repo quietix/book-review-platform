@@ -1,13 +1,17 @@
 from typing import Type
 
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.sql import func
 
-from config import logger
+from config import logger, config
 
 from models import (
     Author as AuthorModel,
     User as UserModel,
     Book as BookModel,
+    ReadingItem as ReadingItemModel,
+    Rating as RatingModel,
+    Status as StatusModel,
 )
 from schemas.book_schema import (
     BookCreateManually,
@@ -112,3 +116,45 @@ class BookRepository:
             exc = DeleteBookException()
             logger.error(f"{exc.detail}. Details: {e}")
             raise exc
+
+    @classmethod
+    def get_recommendations(cls, session: Session, authed_user: UserModel):
+        most_recent_author_subquery = (
+            session.query(BookModel.author_id)
+            .join(ReadingItemModel, ReadingItemModel.book_id == BookModel.id)
+            .join(StatusModel, StatusModel.id == ReadingItemModel.status_id)
+            .filter(
+                ReadingItemModel.user_id == authed_user.id,
+                StatusModel.status == config.FINISHED_BOOKS_STATUS_NAME
+            )
+            .order_by(ReadingItemModel.updated_at.desc())
+            .limit(1)
+            .subquery()
+        )
+
+        finished_books_subquery = (
+            session.query(BookModel.id)
+            .join(ReadingItemModel, ReadingItemModel.book_id == BookModel.id)
+            .join(StatusModel, StatusModel.id == ReadingItemModel.status_id)
+            .filter(
+                ReadingItemModel.user_id == authed_user.id,
+                StatusModel.status == config.FINISHED_BOOKS_STATUS_NAME
+            )
+            .subquery()
+        )
+
+        books_to_recommend = (
+            session.query(
+                BookModel
+            )
+            .join(RatingModel, RatingModel.book_id == BookModel.id, isouter=True)
+            .filter(
+                BookModel.author_id == most_recent_author_subquery.c.author_id,
+                ~BookModel.id.in_(session.query(finished_books_subquery.c.id))
+            )
+            .group_by(BookModel.id)
+            .order_by(func.coalesce(func.avg(RatingModel.rating), 0).desc())
+            .all()
+        )
+
+        return books_to_recommend

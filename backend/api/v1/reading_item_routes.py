@@ -4,6 +4,7 @@ from fastapi import (
     APIRouter,
     Depends,
     Request,
+    Body,
 )
 from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -21,6 +22,7 @@ from schemas.reading_item_schema import (
     ReadingItemPreview,
     ReadingItemDetails,
     ReadingItemCreate,
+    ReadingItemUpdate,
 )
 
 
@@ -54,6 +56,24 @@ async def create_reading_item(request: Request,
     authed_user: UserModel = request.state.user
     return await asyncio.to_thread(
         ReadingItemRepository.create_reading_item, session, create_data, authed_user
+    )
+
+
+@router.patch("/my-reading-list/{reading_item_id}/",
+              response_model=ReadingItemPreview,
+              status_code=200)
+@authenticate
+async def partial_update_reading_item(request: Request,
+                                      reading_item_id: int,
+                                      partial_update_data: ReadingItemUpdate = Body(...),
+                                      session: Session = Depends(get_db_session)):
+    authed_user: UserModel = request.state.user
+    return await asyncio.to_thread(
+        ReadingItemRepository.partial_update_reading_item,
+        session,
+        reading_item_id,
+        partial_update_data,
+        authed_user
     )
 
 

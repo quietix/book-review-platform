@@ -1,3 +1,4 @@
+import asyncio
 from typing import List
 
 from sqlalchemy.orm import Session
@@ -20,13 +21,15 @@ from repositories.author_repository import AuthorRepository
 
 class BookService:
     @classmethod
-    def list_books(cls, session: Session) -> List[BookDetails]:
-        authors = BookRepository.list_books_and_prefetch(session)
+    async def list_books(cls, session: Session) -> List[BookDetails]:
+        authors = await asyncio.to_thread(BookRepository.list_books_and_prefetch, session)
         return [BookDetails.model_validate(author) for author in authors]
 
     @classmethod
-    def retrieve_book(cls, session: Session, author_id: int) -> BookDetails:
-        db_author = BookRepository.retrieve_books_and_prefetch(session, author_id)
+    async def retrieve_book(cls, session: Session, author_id: int) -> BookDetails:
+        db_author = await asyncio.to_thread(
+            BookRepository.retrieve_books_and_prefetch, session, author_id
+        )
         return BookDetails.model_validate(db_author)
 
     @classmethod
@@ -41,17 +44,32 @@ class BookService:
         )
 
         try:
-            db_author = AuthorRepository.get_or_create_author(session, author_schema, authed_user)
+            db_author = await asyncio.to_thread(
+                AuthorRepository.get_or_create_author, session, author_schema, authed_user
+            )
             logger.debug(f"db_author = {db_author}")
 
             book_schema.author_id = db_author.id
             book_schema.isbn = create_data.isbn
             book_schema = BookCreateManually(**book_schema.model_dump())
 
-            db_book = BookRepository.create_book_manually(session, book_schema, authed_user)
+            db_book = await asyncio.to_thread(
+                BookRepository.create_book_manually, session, book_schema, authed_user
+            )
             return db_book
 
         except Exception as e:
             exc = IsbnAPIException()
             logger.error(f"{exc.detail}. Details: {e}")
             raise exc
+
+    # @classmethod
+    # async def get_recommendations(cls,
+    #                               session: Session,
+    #                               authed_user: UserModel) -> BookDetails:
+    #     authors = BookRepository.list_books_and_prefetch(session)
+    #
+    #     authors = await asyncio.to_thread(BookRepository.list_books_and_prefetch, session)
+    #
+    #     return [BookDetails.model_validate(author) for author in authors]
+    #

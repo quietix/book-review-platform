@@ -1,4 +1,4 @@
-import requests
+import httpx
 
 from config import config, logger
 from excepitons.isbn_api_exceptions import IsbnAPIException
@@ -9,50 +9,19 @@ from schemas.book_schema import BookAutomaticCreationByIsbn
 
 async def get_data_by_isbn(isbn: str) -> dict:
     try:
-        headers = {'Authorization': config.ISBNDB_API_KEY}
-        response = requests.get(f"{config.ISBNDB_API_URL}/{isbn}", headers=headers)
-        response.raise_for_status()
-        return response.json()
+        async with httpx.AsyncClient() as client:
+            headers = {'Authorization': config.ISBNDB_API_KEY}
+            response = await client.get(f"{config.ISBNDB_API_URL}/{isbn}", headers=headers)
+            response.raise_for_status()
+            return response.json()
 
-    except requests.exceptions.Timeout:
-        exc = IsbnAPIException(status_code=504,
-                               detail="Request to the external ISBN API timed out.")
-        logger.error(exc.detail)
-        raise exc
-
-    except requests.exceptions.ConnectionError:
-        exc = IsbnAPIException(status_code=502,
-                               detail="Could not connect to the external ISBN API.")
-        logger.error(exc.detail)
-        raise exc
-
-    except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 404:
-            exc = IsbnAPIException(status_code=404,
-                                   detail="Book not found for the given ISBN.")
-            logger.error(exc.detail)
-            raise exc
-
-        elif e.response.status_code == 401:
-            exc = IsbnAPIException(status_code=401,
-                                   detail="Unauthorized access to the ISBN API.")
-            logger.error(exc.detail)
-            raise exc
-
-        elif e.response.status_code == 503:
-            exc = IsbnAPIException(status_code=503,
-                                   detail="The external ISBN API is currently unavailable.")
-            logger.error(exc.detail)
-            raise exc
-
-        else:
-            exc = IsbnAPIException()
-            logger.error(exc.detail)
-            raise exc
+    except httpx.RequestError as e:
+        logger.error(f"Error fetching data for ISBN {isbn}. Details: {e}")
+        raise IsbnAPIException(detail=f"Error fetching data for ISBN {isbn}")
 
     except Exception as e:
         exc = IsbnAPIException()
-        logger.error(f"{exc.detail}. Details: {e}")
+        logger.error(f"Error fetching data for ISBN {isbn}. Details: {e}")
         raise exc
 
 

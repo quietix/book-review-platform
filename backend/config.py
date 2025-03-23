@@ -31,6 +31,8 @@ class Config:
         self.ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
         self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
+        self.FINISHED_BOOKS_STATUS_NAME = os.getenv("FINISHED_BOOKS_STATUS_NAME")
+
     def _setup_db(self):
         self.DB_NAME = os.getenv("DB_NAME")
         self.DB_USER = os.getenv("DB_USER")

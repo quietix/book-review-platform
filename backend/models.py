@@ -156,3 +156,4 @@ class ReadingItem(Base):
     status = relationship("Status", back_populates="reading_items")
 
     published_at: Mapped[datetime] = mapped_column(default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(default=func.now(), onupdate=func.now())

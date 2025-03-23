@@ -7,7 +7,10 @@ from models import (
     ReadingItem as ReadingItemModel,
     User as UserModel
 )
-from schemas.reading_item_schema import ReadingItemCreate
+from schemas.reading_item_schema import (
+    ReadingItemCreate,
+    ReadingItemUpdate
+)
 
 from excepitons.reading_item_exceptions import (
     ReadingItemDoesNotExist,
@@ -31,7 +34,6 @@ class ReadingItemRepository:
     def list_reading_items_and_prefetch(session: Session,
                                         authed_user: UserModel) -> list[Type[ReadingItemModel]]:
         return session.query(ReadingItemModel).options(
-            joinedload(ReadingItemModel.user),
             joinedload(ReadingItemModel.book),
             joinedload(ReadingItemModel.status)
         ).filter(
@@ -65,7 +67,6 @@ class ReadingItemRepository:
                                            authed_user: UserModel) -> Type[ReadingItemModel]:
         db_reading_item = (
             session.query(ReadingItemModel).options(
-                joinedload(ReadingItemModel.user),
                 joinedload(ReadingItemModel.book),
                 joinedload(ReadingItemModel.status)
             ).filter(
@@ -126,6 +127,29 @@ class ReadingItemRepository:
             logger.error(f"Error in ReadingItemRepository::create_reading_item. "
                          f"Details: {e}")
             raise exc
+
+    @classmethod
+    def partial_update_reading_item(cls,
+                                    session: Session,
+                                    reading_item_id: int,
+                                    update_data: ReadingItemUpdate,
+                                    authed_user: UserModel) -> Type[ReadingItemModel]:
+        db_reading_item = cls.retrieve_reading_item(session, reading_item_id, authed_user)
+        update_data = update_data.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
+            setattr(db_reading_item, key, value)
+
+        try:
+            session.commit()
+
+        except Exception as e:
+            exc = ReadingItemUpdate()
+            logger.error(f"Error in ReadingItemRepository::partial_update_reading_item. "
+                         f"Details: {e}")
+            raise exc
+
+        return db_reading_item
 
     @classmethod
     def delete_reading_item(cls,

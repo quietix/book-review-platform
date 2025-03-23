@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -23,6 +25,7 @@ from schemas.book_schema import (
     BookCreateManually,
     BookCreateByIsbn,
     BookPartialUpdate,
+    BookRecommendations,
 )
 
 
@@ -31,13 +34,22 @@ router = APIRouter()
 
 @router.get("/books/", response_model=list[BookDetails])
 async def list_books(session: Session = Depends(get_db_session)):
-    return BookService.list_books(session)
+    return await BookService.list_books(session)
 
 
 @router.get("/books/{book_id}/", response_model=BookDetails, status_code=200)
 async def retrieve_book(book_id: int,
                         session: Session = Depends(get_db_session)):
-    return BookService.retrieve_book(session, book_id)
+    return await BookService.retrieve_book(session, book_id)
+
+
+@router.get("/recommendations/", response_model=list[BookRecommendations])
+@authenticate
+async def list_recommendations(request: Request,
+                               session: Session = Depends(get_db_session)):
+    authed_user: UserModel = request.state.user
+    res = await asyncio.to_thread(BookRepository.get_recommendations, session, authed_user)
+    return res
 
 
 @router.post("/books/create-manually/", response_model=BookPreview, status_code=201)
@@ -46,7 +58,9 @@ async def create_book_manually(request: Request,
                                create_data: BookCreateManually,
                                session: Session = Depends(get_db_session)):
     authed_user: UserModel = request.state.user
-    return BookRepository.create_book_manually(session, create_data, authed_user)
+    return await asyncio.to_thread(
+        BookRepository.create_book_manually, session, create_data, authed_user
+    )
 
 
 @router.post("/books/create-by-isbn/", response_model=BookPreview, status_code=201)
@@ -66,9 +80,9 @@ async def partial_update_book(request: Request,
                               session: Session = Depends(get_db_session)):
     db_author = BookRepository.retrieve_book(session, book_id)
     UserIsPublisher.check_permissions(request, db_author)
-    return BookRepository.partial_update_book(session,
-                                              book_id,
-                                              partial_update_data)
+    return await asyncio.to_thread(
+        BookRepository.partial_update_book, session, book_id, partial_update_data
+    )
 
 
 @router.delete("/books/{book_id}/", status_code=200)
@@ -79,7 +93,9 @@ async def delete_book(request: Request,
     db_author = BookRepository.retrieve_book(session, book_id)
     UserIsPublisher.check_permissions(request, db_author)
 
-    is_deleted = BookRepository.delete_book(session, book_id)
+    is_deleted = await asyncio.to_thread(
+        BookRepository.delete_book, session, book_id
+    )
 
     if is_deleted:
         return JSONResponse(content={"details": "Book deleted successfully."}, status_code=200)
