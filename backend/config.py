@@ -12,6 +12,7 @@ load_dotenv()
 class Config:
     def __init__(self):
         self._setup_app()
+        self._setup_admin_user()
         self._setup_db()
         self._setup_isbndb()
         self.validate_variables()
@@ -32,6 +33,11 @@ class Config:
         self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
         self.FINISHED_BOOKS_STATUS_NAME = os.getenv("FINISHED_BOOKS_STATUS_NAME")
+
+    def _setup_admin_user(self):
+        self.ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+        self.ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+        self.ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
     def _setup_db(self):
         self.DB_NAME = os.getenv("DB_NAME")

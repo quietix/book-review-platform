@@ -71,6 +71,47 @@ class UserRepository:
 
         return db_user
 
+    @staticmethod
+    def get_or_create_admin_user(session: Session,
+                                 user: UserUpsert) -> Type[UserModel] | UserModel:
+        hashed_password = get_hashed_password(user.password)
+
+        if 'username' in user.model_dump(exclude_unset=True):
+            new_username = user.username
+            user_with_same_username = (
+                session.query(UserModel)
+                .filter(UserModel.username == new_username)
+                .first()
+            )
+            if user_with_same_username:
+                logger.warning("Username is already taken.")
+                return user_with_same_username
+
+        if 'email' in user.model_dump(exclude_unset=True):
+            new_email = user.email
+            user_with_same_email = (
+                session.query(UserModel)
+                .filter(UserModel.email == new_email)
+                .first()
+            )
+            if user_with_same_email:
+                logger.warning("Email is already taken.")
+                return user_with_same_email
+
+        try:
+            db_user = UserModel(
+                **user.model_dump(exclude={"password"}),
+                hashed_password=hashed_password,
+                is_admin=True
+            )
+
+            session.add(db_user)
+            session.commit()
+            return db_user
+
+        except Exception as e:
+            logger.error(f"Failed to create user. Details: {e}")
+
     @classmethod
     def update_user(cls,
                     session: Session,
