@@ -13,6 +13,7 @@ from config import config
 from repositories import UserRepository
 from utils.db_utils import get_db_session
 from models import User as UserModel
+from config import logger
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -39,6 +40,9 @@ def verify_token(token: str, session: Session = None) -> UserModel:
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt_pac.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Verification token failure. Details: {e}")
+        raise HTTPException(status_code=500, detail="JWT token verification failure.")
 
 
 def get_custom_openapi_schema(app: FastAPI):
@@ -58,11 +62,8 @@ def get_custom_openapi_schema(app: FastAPI):
         "bearerFormat": "JWT"
     }
 
-    if "components" not in openapi_schema:
-        openapi_schema["components"] = {}
-
-    if "securitySchemes" not in openapi_schema["components"]:
-        openapi_schema["components"]["securitySchemes"] = {}
+    openapi_schema.setdefault("components", {})
+    openapi_schema["components"].setdefault("securitySchemes", {})
 
     openapi_schema["components"]["securitySchemes"]["BearerAuth"] = security_scheme
 

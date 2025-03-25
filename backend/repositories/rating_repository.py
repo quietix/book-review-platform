@@ -12,7 +12,7 @@ from schemas.rating_schema import (
     RatingCreate,
     RatingUpdate,
 )
-from excepitons.rating_exceptions import (
+from exceptions.rating_exceptions import (
     RatingDoesNotExist,
     CreateRatingException,
     UpdateRatingException,

@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 
-from excepitons import ConfigurationError
+from exceptions import ConfigurationError
 
 
 load_dotenv()

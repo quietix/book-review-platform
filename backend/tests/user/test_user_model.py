@@ -5,7 +5,7 @@ from models import User as UserModel
 from tests.factories import UserFactory, UserUpsertDataFactory
 from repositories import UserRepository
 from schemas import UserPartialUpdate
-from excepitons import (
+from exceptions.user_exceptions import (
     UserDoesNotExist,
     CreateUserException,
     UpdateUserException

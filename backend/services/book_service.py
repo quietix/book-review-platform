@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from config import logger
-from excepitons.isbn_api_exceptions import IsbnAPIException
+from exceptions.isbn_api_exceptions import IsbnAPIException
 from utils import isbn_api_utils
 from models import User as UserModel
 
@@ -62,14 +62,3 @@ class BookService:
             exc = IsbnAPIException()
             logger.error(f"{exc.detail}. Details: {e}")
             raise exc
-
-    # @classmethod
-    # async def get_recommendations(cls,
-    #                               session: Session,
-    #                               authed_user: UserModel) -> BookDetails:
-    #     authors = BookRepository.list_books_and_prefetch(session)
-    #
-    #     authors = await asyncio.to_thread(BookRepository.list_books_and_prefetch, session)
-    #
-    #     return [BookDetails.model_validate(author) for author in authors]
-    #

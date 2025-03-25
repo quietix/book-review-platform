@@ -17,7 +17,7 @@ from schemas.book_schema import (
     BookCreateManually,
     BookPartialUpdate,
 )
-from excepitons.book_exceptions import (
+from exceptions.book_exceptions import (
     BookDoesNotExist,
     CreateBookException,
     UpdateBookException,

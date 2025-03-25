@@ -12,7 +12,7 @@ from schemas.reading_item_schema import (
     ReadingItemUpdate
 )
 
-from excepitons.reading_item_exceptions import (
+from exceptions.reading_item_exceptions import (
     ReadingItemDoesNotExist,
     CreateReadingItemException,
     DeleteReadingItemException

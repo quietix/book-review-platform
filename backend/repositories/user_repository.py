@@ -11,7 +11,7 @@ from schemas import (
     UserPartialUpdate
 )
 
-from excepitons import (
+from exceptions.user_exceptions import (
     UserDoesNotExist,
     CreateUserException,
     UpdateUserException,

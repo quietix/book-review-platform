@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from utils.db_utils import get_db_session
 
 from repositories import UserRepository
-from excepitons import DeleteUserException
+from exceptions.user_exceptions import DeleteUserException
 from services import authenticate
 from models import User as UserModel
 
