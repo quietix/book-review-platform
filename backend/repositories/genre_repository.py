@@ -9,7 +9,7 @@ from schemas.genre_schema import (
     GenreUpdate,
 )
 
-from excepitons.genre_exceptions import (
+from exceptions.genre_exceptions import (
     GenreDoesNotExist,
     CreateGenreException,
     UpdateGenreException,

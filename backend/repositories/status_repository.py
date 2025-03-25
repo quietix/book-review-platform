@@ -6,7 +6,7 @@ from config import logger
 from models import Status as StatusModel
 from schemas.status_schema import StatusUpsert
 
-from excepitons.status_exceptions import (
+from exceptions.status_exceptions import (
     StatusDoesNotExist,
     CreateStatusException,
     UpdateStatusException,

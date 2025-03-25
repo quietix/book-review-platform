@@ -1,7 +1,7 @@
 import httpx
 
 from config import config, logger
-from excepitons.isbn_api_exceptions import IsbnAPIException
+from exceptions.isbn_api_exceptions import IsbnAPIException
 
 from schemas.author_schema import AuthorCreate
 from schemas.book_schema import BookAutomaticCreationByIsbn
@@ -45,10 +45,22 @@ async def scrap_author_data(scrapped_data: dict) -> AuthorCreate:
 
 async def scrap_book_data(scrapped_data: dict) -> BookAutomaticCreationByIsbn:
     try:
-        title: str = scrapped_data["book"]["title"]
-        description: str = scrapped_data["book"]["synopsis"]
+        book_data = scrapped_data["book"]
+        if not book_data:
+            exc = IsbnAPIException(detail="Failed to scrap book data.")
+            logger.error(f"{exc.detail}")
+            raise exc
+
+        title: str = book_data.get("title")
+        if not title:
+            exc = IsbnAPIException(detail="Failed to scrap book title.")
+            logger.error(f"{exc.detail}")
+            raise exc
+
+        description: str = book_data.get("synopsis")
 
         book_schema = BookAutomaticCreationByIsbn(title=title, description=description)
+
         return book_schema
 
     except Exception as e:

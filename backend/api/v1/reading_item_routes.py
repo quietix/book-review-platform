@@ -10,7 +10,7 @@ from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from utils.db_utils import get_db_session
-from excepitons.status_exceptions import DeleteStatusException
+from exceptions.status_exceptions import DeleteStatusException
 from repositories.reading_item_repository import ReadingItemRepository
 
 from services import authenticate

@@ -13,7 +13,7 @@ from models import (
     User as UserModel,
     Review as ReviewModel,
 )
-from excepitons.review_exceptions import (
+from exceptions.review_exceptions import (
     ReviewDoesNotExist,
     CreateReviewException,
     UpdateReviewException,

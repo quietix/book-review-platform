@@ -11,7 +11,7 @@ from schemas.author_schema import (
     AuthorPartialUpdate,
     AuthorCreate,
 )
-from excepitons.author_exceptions import (
+from exceptions.author_exceptions import (
     AuthorDoesNotExist,
     CreateAuthorException,
     UpdateAuthorException,

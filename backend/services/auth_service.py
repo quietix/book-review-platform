@@ -15,10 +15,8 @@ def authenticate(func):
 
         token = authorization.split(" ")[1]
 
-        if "session" in kwargs:
-            user = verify_token(token, kwargs["session"])
-        else:
-            user = verify_token(token)
+        session = kwargs.get("session")
+        user = verify_token(token, session)
 
         request.state.user = user
 

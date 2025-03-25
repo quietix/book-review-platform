@@ -8,7 +8,7 @@ from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from utils.db_utils import get_db_session
-from excepitons.genre_exceptions import DeleteGenreException
+from exceptions.genre_exceptions import DeleteGenreException
 from repositories.genre_repository import GenreRepository
 from services import authenticate
 from permissions import IsAdmin
