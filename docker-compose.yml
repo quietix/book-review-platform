@@ -1,0 +1,61 @@
+services:
+  db:
+    container_name: postgre_container
+    restart: always
+    image: postgres
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
+
+  fastapi:
+    container_name: fastapi_container
+    build: ./backend
+    command: bash -c "alembic upgrade head && python init_db.py && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    env_file:
+      - .env
+    environment:
+      # FastApi app setup
+      DEBUG: ${DEBUG}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      AUTH_ALGORITHM: ${AUTH_ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      FINISHED_BOOKS_STATUS_NAME: ${FINISHED_BOOKS_STATUS_NAME}
+
+      # Admin user setup
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+
+      # ISBNDB setup
+      ISBNDB_API_KEY: ${ISBNDB_API_KEY}
+      ISBNDB_API_URL: ${ISBNDB_API_URL}
+
+      # DB access setup
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
